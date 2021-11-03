@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}miÚJSÁG{% endblock %}</title>
+        {# Run `composer require symfony/webpack-encore-bundle`
+               and uncomment the following Encore helpers to start using Symfony UX #}
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="/styles/style.css" />
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Montserrat&family=Roboto&display=swap" rel="stylesheet">
+        {% block stylesheets %}
+            {#{{ encore_entry_link_tags('app') }}#}
+        {% endblock %}
+
+        {% block javascripts %}
+            {#{{ encore_entry_script_tags('app') }}#}
+        {% endblock %}
+    </head>
+    <body class="bg-light"{% block bodytags %}{% endblock %}>
+    <div class="d-flex flex-column min-vh-100 page-wrapper">
+        <nav class="navbar navbar-expand-md navbar-fixed-top navbar-dark bg-green">
+            <div class="container-xl">
+            <a class="navbar-brand news-text" href="{{ path('app_main') }}">miÚJSÁG</a>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsmn" aria-controls="navbarsExample06" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbarsmn" style="">
+                <ul class="navbar-nav mr-auto">
+                    {% for item in menu %}
+                        {% if item.subitems is defined %}
+                            {% set dropdown = " dropdown" %}
+                        {% else %}
+                            {% set dropdown = "" %}
+                        {% endif %}
+
+                        {% if item.path is not empty and path(item.path) == app.request.pathinfo %}
+                            <li class="nav-item active{{ dropdown }}">
+                        {% else %}
+                            <li class="nav-item{{ dropdown }}">
+                        {% endif %}
+                            {% if item.path is not empty %}
+                                {# {% if item.lined is defined %}
+                                <a class="nav-link bg-white text-success mx-2" href="{{ path(item.path) }}">
+                                {% else %}
+                                <a class="nav-link" href="{{ path(item.path) }}">
+                                {% endif %} #}
+                                <a class="nav-link" href="{{ path(item.path) }}">
+                            {% endif %}
+                            {{ item.text }}
+                            {% if item.path is not empty %}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <ul class="navbar-nav my-2 my-md-0">
+                    {% if app.user %}
+                        <li class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="user" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ app.user }}</a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user">
+                                {% if is_granted('ROLE_MOD') %}
+                                <a class="dropdown-item" href="{{ path('app_admin') }}">Oldal beállítások</a>
+                                {% endif %}
+                                <a class="dropdown-item" href="{{ path('app_user', {user: app.user.getUsername}) }}">Adatlap</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}">Kijelentkezés</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}">Bejelentkezés</a>
+{# <a class="nav-link" href="#" onclick="login()">Bejelentkezés</a>
+                                <div class="modal fade" id="user-login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="row mt-5 justify-content-center" id="user-login-form"></div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function login() {
+                                        requestedOnce = document.getElementById('user-login-form')
+                                        if (requestedOnce.classList.contains('requested')) {
+                                            $('#user-login').modal('show')
+                                            return;
+                                        }
+                                        requestedOnce.classList.add('requested')
+
+                                        var xmlHttp = new XMLHttpRequest();
+                                        xmlHttp.onreadystatechange = function() {
+                                            if (this.readyState == 4 && this.status == 200) {
+                                                document.getElementById('user-login-form').innerHTML = this.responseText;
+                                                $('#user-login').modal('show')
+                                            }
+                                        }
+                                        xmlHttp.open("GET", '/api/login', true);
+                                        xmlHttp.send();
+                                    }
+                                </script> #}
+                            </li>
+                        </ul>
+                    {% endif %}
+                </ul>
+            </div>
+            </div>
+        </nav>
+
+        <main role="main" class="container-xl flex-fill">
+            {% include "flashbag.html.twig" %}
+            {% block body %}{% endblock %}
+        </main>
+
+        {% block footer %}
+        <footer class="bg-darkwhite footer cs-footer">
+            {% if app.user is null and not app.session.get('hirlevel') or app.user is not null and not app.user.getSubscribed and not app.user.isHideSubpanel %}
+            <div class="bg-dark color-orange" id="hirlevel">
+                <div class="container-xl collapse show">
+                    <div class="row">
+                        <div class="input-group my-1 col-lg-5">
+                            {% if app.user %}
+                                <button class="btn btn-light" onclick="dontShowAgain()" type="button">Ne mutasd újra</button>
+                            {% else %}
+                                <button class="btn btn-light" onclick="dontShowAgain()" type="button">Elrejtés</button>
+                            {% endif %}
+                        </div>
+                        <div class="input-group my-1 col-lg-7 col-md-12">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text color-orange" id=""><b>Hírlevél</b></span>
+                            </div>
+                            <input {% if app.user %}value="{{ app.user.getEmail }}"{% endif%} id="hirdet-email" onkeyup="if (event.key == 'Enter') hirdetesFeliratkoz()" maxlength="254" type="text" class="form-control" placeholder="Email cím" aria-label="Hírlevélre feliratkozás" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-light" onclick="hirdetesFeliratkoz()" type="button">Feliratkozás</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="container-xl p-3">
+                <div class="row justify-content-center footer-row">
+                    <div class="col-md-4 list-group list-group-flush">
+                        <a href="{{ path('app_impresszum') }}" class="list-group-item list-group-item-action h4 underline">Impresszum</a>
+                    </div>
+                    <div class="col-md-4 list-group list-group-flush">
+                        <a href="{{ path('app_info') }}" class="list-group-item list-group-item-action h4 underline">Információ</a>
+                        <a href="{{ path('app_aszf') }}" class="list-group-item list-group-item-action">Általános szerződési feltételek</a>
+                        <a href="{{ path('app_avsz') }}" class="list-group-item list-group-item-action">Adatvédelmi szabályzat</a>
+                        <a href="{{ path('app_dijak') }}" class="list-group-item list-group-item-action">Díjszabások</a>
+                    </div>
+                    <div class="col-md-4 text-md-right list-group list-group-flush">
+                        <a href="{{ path('app_conns') }}" class="list-group-item list-group-item-action h4 underline">Kapcsolat</a>
+                        <a href="https://dunafenye.dunafenye.hu/kapcsolat.php" class="list-group-item list-group-item-action">Duna Fénye Nonprofit Kkt.</a>
+                        <a href="{{ path('app_conn') }}" class="list-group-item list-group-item-action">miÚJSÁG Közéleti Havi Lap</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        {% endblock %}
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                bsCustomFileInput.init()
+            })
+        </script>
+        <script src="/js/hirlevel.js"></script>
+    </div>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+<p>{% block title %}miÚJSÁG Hírlevél{% endblock %}</p>
+<hr><br>
+{% if user is defined and user is not null %}
+    <p>Kedves <b>{{ user.getFirstName }}</b>!</p>
+{% endif %}
+
+{% block content %}{{ msg|raw }}{% endblock %}
+<br><br><br>
+<hr>
+Amennyiben kérdése van keressen minket az <a href="mailto:miujsag@dunafenye.hu">miujsag@dunafenye.hu</a> email címen.<br>
+Hírlevélről való leiratkozáshoz kattintson <a href="https://miujsag.dunafenye.hu/api/leiratkozas?token={{ token }}">ide</a>

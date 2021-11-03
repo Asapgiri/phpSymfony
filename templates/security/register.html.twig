@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Regisztráció{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="my-3 p-3 bg-white rounded box-shadow center-600 border border-gray">
+            <h6 class="border-bottom border-gray pb-2 mb-0">Regisztráció</h6>
+            <div class="text-muted pt-3">
+                {% if form is not null and form is not empty %}
+                    {% set endForm %}
+                        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                        {{ form_start(form) }}
+                        {{ form_widget(form, { 'attr': {'class': 'row row d-flex align-items-end'} }) }}
+                        {{ form_end(form) }}
+                    {% endset %}
+                    {{ endForm|replace({'{{ aszf }}': "<a target='_blank' href='" ~ path('app_aszf') ~ "'>Általános szerződési feltételeket</a>", '{{ avsz }}': "<a target='_blank' href='" ~ path('app_avsz') ~ "'> Adatvédelmi szabályzatot</a>"})|raw }}
+                {% endif %}
+            </div>
+            <span class="red">*</span><span> kötelező kitölteni.</span>
+        </div>
+        <div class="col-3"></div>
+    </div>
+{% endblock %}

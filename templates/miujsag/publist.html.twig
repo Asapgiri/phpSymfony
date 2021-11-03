@@ -1,0 +1,85 @@
+{% if colWidth is not defined %}
+    {% set colWidth = 4 %}
+{% endif %}
+{% if search is not defined %}
+    {% set search = false %}
+{% endif %}
+{% if route is not defined %}
+    {% set route = "app_pub" %}
+{% endif %}
+
+{% if search == true %}
+    <p><input class="" type="text" id="searchbar" onkeyup="searchWithoutRow()" placeholder="Megjelenés keresése.."></p>
+<div id="table">
+    {% endif %}
+    <div class="modal fade" id="pub-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModelLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="del-pic" style="max-width: 250px;" />
+                    <span id="del-desc"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
+                    <button type="button" class="btn btn-danger" id="delete-pub-btn">Törlés</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {% for pub in pubs %}
+        {% if loop.index0 > 0 and (loop.index0 % ((colWidth/2)+1)) == 0 %}
+    </div><div class="row">
+        {% endif %}
+        <div class="text-muted pt-3 px-2 col-md-{{ colWidth }} col-sm-6{% if search == true %} searchable{% endif %}">
+            <div class="card mb-{{ colWidth }} sm-6 box-shadow{% if is_granted('ROLE_MOD') and not pub.isPubVisibleYet %} bg-light{% endif %}">
+                {% if pub.getPubImage is not null %}
+                    <a class="card-img-top" href="{{ path('app_pub', {'pubId': pub.getPubId}) }}">
+                        <img class="img-hover" src="{{ pub.getPubImage }}" />
+                    </a>
+                {% endif %}
+                <div class="card-body">
+                    <p class="card-text mb-2"><a href="{{ path('app_pub', {'pubId': pub.getPubId}) }}">{{ pub.getPubName }}</a></p>
+                    {% if pub.getPubText is not null %}
+                        <p class="d-block mb-3">{{ pub.getPubText }}</p>
+                    {% endif %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_editpub', {pubId: pub.getPubId, route: 'app_pub'}) }}">Edit</a>
+                                <a class="btn btn-sm btn-outline-secondary" href="#" onclick="delPub({{ pub.getPubId }}, '{{ pub.getPubName }}', '{{ pub.getPubImage }}', '{{ pub.getPubText }}')">Delete</a>
+                            </div>
+                        {% endif %}
+                        <small class="text-muted">
+                            megtekintések: {{ pub.getPubViews }}<br/>
+                            {{ pub.getPubDate|date("Y F d.")|fdateHu }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <script>
+            function delPub(id, name, picture, desc) {
+                document.getElementById('deleteModelLabel').innerText = 'Biztosan törölni szeretné: ' + name + '?'
+                document.getElementById('del-pic').src = picture
+                document.getElementById('del-desc').innerText = desc
+                document.getElementById('delete-pub-btn').onclick = function () {
+                    window.location.href = '/megjelenesek/del/' + id + '/{{ route }}'
+                }
+
+                $('#pub-delete').modal('show')
+            }
+        </script>
+    {% endif %}
+    {% if search == true %}
+</div>
+{% endif %}

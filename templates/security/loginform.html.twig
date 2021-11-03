@@ -1,0 +1,25 @@
+<div class="my-3 p-3 bg-white rounded box-shadow border border-gray center-400">
+    {% if authError is defined and authError %}
+    <h6 class="border-bottom border-gray pb-2 mb-0 text-bold red">{{ authError }}</h6>
+    {% endif %}
+    <h6 class="border-bottom border-gray pb-2 mb-0">Bejelentkezés</h6>
+    <div class="text-muted pt-3">
+        {% if form is not null and form is not empty %}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {% if action is defined and not null %}
+                {{ form_start(form, {'attr': {'action': action}}) }}
+            {% else %}
+                {{ form_start(form) }}
+            {% endif %}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+        {% endif %}
+        <br />
+        <div class="text-muted">
+            <small>
+                <a href="{{ path('request_password_reset') }}">Elfelejtett jelszó?</a>
+                <a class="float-right" href="{{ path('app_register') }}">regisztráció</a>
+            </small>
+        </div>
+    </div>
+</div>

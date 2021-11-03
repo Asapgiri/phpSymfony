@@ -1,0 +1,61 @@
+{# templates/miujsag/forum.html.twig #}
+{# @var forums App/Entity/Forum[]  #}
+
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/search.js"></script>
+{% endblock %}
+
+{% block title %}Fórumok{% endblock %}
+{% block pagetitle %}Fórumok{% endblock %}
+
+{% if pageable is not null %}
+    {% set paging %}
+    <div class="border-bottom border-gray text-right">
+        {% if current != 1 %}<a class="mx-1" href="{{ path('app_forums', {page: 1}) }}"><<</a><a class="mx-1" href="{{ path('app_forums', {page: current-1}) }}"><</a>{% endif %}
+        {% for page in pageable %}
+            <a class="mx-1"{% if page != current %} href="{{ path('app_forums', {page: page}) }}"{% endif %}>{{ page }}</a>
+        {% endfor %}
+        {% if current != last %}<a class="mx-1" href="{{ path('app_forums', {page: current+1}) }}">></a><a class="mx-1" href="{{ path('app_forums', {page: last}) }}">>></a>{% endif %}
+    </div>
+    {% endset %}
+{% else %}
+    {% set paging = "" %}
+{% endif %}
+
+{% block content %}
+    <div class="text-muted pb-3">
+        {% if form is not null and form is not empty %}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form_start(form) }}
+            {{ form_widget(form, { 'attr': {'class': 'row'} }) }}
+            {{ form_end(form) }}
+        {% else %}
+            <p class="text-center">
+                <a href="{{ path('app_login') }}{# , {from: path('app_forum', {forumId: forum.getFId})|replace({"/": "."})}) }} #}">Jelentkezz be</a>
+                vagy
+                <a href="{{ path('app_register') }}">regisztrálj</a>
+                fórum létrehozáshoz!
+            </p>
+        {% endif %}
+    </div>
+    <p><input class="" type="text" id="searchbar" onkeyup="searchWithoutRow()" placeholder="Fórum keresése.."></p>
+    {{ paging }}
+    <div id="table">
+    {% if forums is not empty and not null %}
+        {% for forum in forums %}
+            <div class="list-group list-group-flush text-muted searchable">
+                <a class="list-group-item list-group-item-action mb-1{% if is_granted('ROLE_MOD') and not forum.getFVisible %} bg-light{% endif %}" href="{{ path('app_forum', {'forumId': forum.getFId}) }}">
+                    <strong class="text-gray-dark mb-1">{{ forum.getFName }}</strong>
+                    <small class="float-right text-right">@{{ forum.getFAuthor.getUserName }}<br/>
+                        {{ forum.getFCreated|date("Y F d. H:i:s")|fdateHu }}</small>
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nincsenek még fórumok</p>
+    {% endif %}
+    </div>
+    {{ paging }}
+{% endblock %}

@@ -1,0 +1,104 @@
+{# templates/miujsag/fmessages.html.twig #}
+{# @var messages App/Entity/Message[]  #}
+{# @var forum App/Entity/Forum  #}
+
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/message.js"></script>
+{% endblock %}
+
+{% if pageable is not null %}
+    {% set paging %}
+        {% if current != last %}<span class="float-left"><a href="{{ path('app_forum', {forumId: forum.getFId, page: last}) }}">Ugrás az utolsó oldalra</a></span>{% endif %}
+        {% if current != 1 %}<a class="mx-1" href="{{ path('app_forum', {forumId: forum.getFId, page: 1}) }}"><<</a><a class="mx-1" href="{{ path('app_forum', {forumId: forum.getFId, page: current-1}) }}"><</a>{% endif %}
+        {% for page in pageable %}
+            <a class="mx-1"{% if page != current %} href="{{ path('app_forum', {forumId: forum.getFId, page: page}) }}"{% endif %}>{{ page }}</a>
+        {% endfor %}
+        {% if current != last %}<a class="mx-1" href="{{ path('app_forum', {forumId: forum.getFId, page: current+1}) }}">></a><a class="mx-1" href="{{ path('app_forum', {forumId: forum.getFId, page: last}) }}">>></a>{% endif %}
+    {% endset %}
+{% else %}
+    {% set paging = "" %}
+{% endif %}
+
+{% block leftmenu %}
+    <div class="border-top border-bottom border-gray px-2 py-2 my-0 text-center">
+        <a href="{{ path('app_forums') }}"><< Vissza</a>
+    </div>
+    {{ parent() }}
+{% endblock %}
+
+{% block title %}{{ forum.getFName }}{% endblock %}
+{% block pagetitle %}{{ forum.getFName }}{% endblock %}
+{% block pagedesc %}
+{% if forum.getFDescription is not null and forum.getFDescription != "" %}
+   <span class="col-md-9 px-0 mx-0">{{ forum.getFDescription }}</span>
+{% endif %}
+{% endblock %}
+
+{% block feditor %}{% if is_granted('ROLE_MOD') %}
+    <span class="small">
+        {% if forum.getFVisible %}
+            <a href="{{ path('app_chforumvis', {forumId: forum.getFId, visible: "false"}) }}">Fórum elrejtése</a>
+        {% else %}
+            <a href="{{ path('app_chforumvis', {forumId: forum.getFId, visible: "true"}) }}">Fórum láthatóvá tétele</a>
+        {% endif %}
+    </span>
+{% endif %}{% endblock %}
+{% block creator %}létrehozta: <a href="{{ path('app_user', {user: forum.getFAuthor.getUsername}) }}">@{{ forum.getFAuthor.getUsername }}</a>
+{% if app.user is not null and forum.getFAuthor.getUsername == app.user.getUsername or is_granted('ROLE_MOD') %}
+    <br><a href="{{ path('app_delforum', {forumId: forum.getFId}) }}">Fórum törlése</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if paging %}<div class="border-bottom border-gray text-right">{{ paging }}</div>{% endif %}
+    <div id="msg-container">
+    {% if messages is not empty and not null %}
+        {% for msg in messages %}
+            <div class="my-2 p-2 bg-white rounded box-shadow message" id="msg-{{ msg.getMsgId }}">
+                <p class="media-body pb-1 mb-0 lh-125 border-bottom border-gray">
+                    <a href="{{ path('app_user', {user: msg.getMsgAuthor.getUsername}) }}">@{{ msg.getMsgAuthor }}</a>:
+                    {% if is_granted("ROLE_MOD") or app.user is not null and app.user.Username == msg.getMsgAuthor.getUsername %}
+                        <a class="float-right small" href="#" onclick="delMsg({{ msg.getMsgId }})">Törlés</a>
+                    {% endif %}
+                </p>
+                <p class="pt-1 pb-2 m-0">{{ msg.getMsgText|nl2br }}</p>
+                {# {% if msg.getMsgCreated != msg.getMsgModified %}
+                    <small class="d-block text-right">{{ msg.getMsgCreated|date("Y M. d. H:i:s") }}<br />szerkesztve: {{ msg.getMsgModified|date("Y M. d. H:i:s") }}</small>
+                {% else %} #}
+                    <small class="d-block text-right">{{ msg.getMsgCreated|date("Y M. d. H:i:s") }}</small>
+                {# {% endif %} #}
+            </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+    {% if paging %}<div class="border-top border-gray text-right">{{ paging }}</div>{% endif %}
+{# {% if form is not null and form is not empty %}
+        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form) }}
+        <h5 class="border-bottom border-gray px-1 pb-1 mt-3">Üzenet küldése:</h5>
+        {{ form_widget(form, {'attr': {'class': "row"}}) }}
+        {{ form_end(form) }} #}
+    {% if form %}
+        <form name="form" method="post">
+            <h5 class="border-bottom border-gray px-1 pb-1 mt-3">Üzenet küldése:</h5>
+            <div id="form" class="row"><div class="col-10 pr-1 form-group">
+                <textarea id="form_msg_text" name="form[msg_text]" required="required" onkeyup="console.log(event.shiftKey); if (event.shiftKey === false && event.key == 'Enter') {msgSend({{ forum.getFId }}); this.value = ''}" oninput="if (this.scrollHeight < 150) {this.style.height = ``;this.style.height = this.scrollHeight + 3 + `px`}" class="form-control"></textarea>
+            </div>
+            <div class="col-2 pl-1 form-group">
+                <button type="button" onclick="msgSend({{ forum.getFId }});" id="form_Send" name="form[Send]" class="btn-primary btn-block btn" style="height: 100%;">Küldés</button>
+            </div>
+        </form>
+    {% elseif app.user is null %}
+        <p class="text-center border-top border-gray my-3 py-2">
+            <a href="{{ path('app_login') }}{# , {from: path('app_forum', {forumId: forum.getFId})|replace({"/": "."})}) }} #}">Jelentkezz be</a>
+            vagy
+            <a href="{{ path('app_register') }}">regisztrálj</a>
+            a válaszoláshoz!
+        </p>
+    {% endif %}
+    {% if current == last or last == 0 %}
+        <script>setInterval(refreshMessages, 5000, {{ forum.getFId }});</script>
+    {% endif %}
+{% endblock %}

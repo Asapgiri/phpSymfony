@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bejelentkezés{% endblock %}
+
+{% block body %}
+    {% if userError is not null %}
+        <div class="justify-content-center">
+                <div class="my-3 p-3 bg-warning rounded box-shadow center-400">
+                    <h5 class="pb-2 mb-0 text-center warning-message"><strong>{{ userError }}</strong></h5>
+                    </div>
+                </div>
+        </div>
+<div>
+    {% else %}
+        <div class="py-5">
+    {% endif %}
+        <div class="my-3 p-3 bg-white rounded box-shadow border border-gray center-400">
+            <h6 class="border-bottom border-gray pb-2 mb-0">Elfelejtett jelszó
+            {% if user is defined %}
+                <small class="float-right">@{{ user }}</small>
+            {% endif %}
+            </h6>
+            <div class="text-muted pt-3">
+                {% if form is not null and form is not empty %}
+                    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

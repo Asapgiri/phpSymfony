@@ -1,0 +1,65 @@
+{% extends 'admin/adminpagebase.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/search.js"></script>
+    <script src="/js/pub.js"></script>
+{% endblock %}
+
+{% block title %}Megjelenések{% endblock %}
+{% block pagetitle %}Megjelenések{% endblock %}
+{% block creator %}<a href="{{ path('app_addpub') }}">Megjelenés hozzáadása</a>{% endblock %}
+
+{% block content %}
+    {% if pubs is defined and not null %}
+        <p><input class="" type="text" id="searchbar" onkeyup="searchFunction()" placeholder="Megjelenés.."></p>
+        <ul class="list-group list-group-flush" id="table">
+            <li class="list-group-item list-group-item-action p-2 disabled">
+                <strong>
+                    <div class="row">
+                        <div class="col-md-1">Id</div>
+                        <div class="col-md-1">Készítő</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3">Megnevezés</div>
+                        <div class="col-md-2">Készítés</div>
+                        <div class="col-md-2">Megtekintések</div>
+                        <div class="col-md-2 text-center">Műveletek</div>
+                    </div>
+                </strong>
+            </li>
+            {% for pub in pubs %}
+                <li class="list-group-item list-group-item-action p-2 small searchable cursor-pointer" id="colli-{{ pub.getPubId }}"
+                    data-toggle="collapse" data-target="#collapse-{{ pub.getPubId }}"
+                    aria-expanded="false" aria-controls="collapse-{{ pub.getPubId }}" onclick="watchPubInfo({{ pub.getPubId }});">
+                    <div class="row">
+                        <div class="col-md-1">{{ pub.getPubId }}</div>
+                        <div class="col-md-2">
+                            <a href="{{ path('app_user', {user: pub.getPubAuthor.getUsername }) }}">@{{ pub.getPubAuthor.getUsername }}</a>
+                            {# {% if pub.getPubAuthor.getUOnline %}
+                            <span class="badge badge-success badge-pill float-right">online</span>
+                            {% endif %} #}<br />
+                            <strong>{{ pub.getPubAuthor.getLastName }} {{ pub.getPubAuthor.getFirstName }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><a href="{{ path('app_pub', {pubId: pub.getPubId}) }}">{{ pub.getPubName }}</a></strong>
+                        </div>
+                        {# <div class="col-md-1">
+                            <a href="{{ pub.getPubImage }}"><img class="img-hover" src="{{ pub.getPubImage }}" /></a>
+                        </div> #}
+                        <div class="col-md-2">{{ pub.getPubDate|date('Y F d. H:i:s')|fdateHu }}</div>
+                        <div class="col-md-2">({{ pub.getPubViews }})
+                            {% if pub.isPubVisible %}
+                                <span class="badge badge-primary badge-pill float-right">visible</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-2 text-right">Műveletek</div>
+                    </div>
+                </li>
+                <li class="list-group-item border-dark list-group-item-action p-0 bg-light collapse" id="collapse-{{ pub.getPubId }}">
+                    <div class="m-2 overflow-auto small row" style="max-height: 500px" id="pubmessage-{{ pub.getPubId }}"></div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        Valami hiba folytán nem található a pubs állomány, vagy null...
+    {% endif %}
+{% endblock %}

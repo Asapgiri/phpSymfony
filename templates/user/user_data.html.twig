@@ -1,0 +1,74 @@
+{% if is_granted('ROLE_MOD') %}
+    {% set extendPath = 'admin/adminpagebase.html.twig' %}
+{% else %}
+    {% set extendPath = 'miujsag/miujsag_base.html.twig' %}
+{% endif %}
+{% extends extendPath %}
+{% if is_granted('ROLE_MOD') %}
+{% set role = user.getRoles[0]|replace({'ROLE_': ''})|lower ~ "::" %}
+{% else %}
+{% set role = "" %}
+{% endif %}
+
+{% block title %}{{ role }}{{ user.getUsername }}{% endblock %}
+{% block pagetitle %}{{ role }}{{ user.getUsername }}{% endblock %}
+{% block creator %}
+    {% if app.user is not null and user.getUserId == app.user.getUserId or is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_edituser', {user: user.getUsername}) }}">Szerkesztés</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="">
+        <div class="row">
+            <div class="col-md-4">
+                <img class="img-hover" src="{{ user.getUAvatarReturnFullPath }}" />
+            </div>
+            <div class="col-md-8">
+                <p class="{% if user.getLastName is not null or user.getFirstName is not null %}
+                    small
+                {% endif %} text-muted m-0 p-0">@{{ user.getUsername }}
+                    {# {% if user.getUOnline %}
+                        <span class="badge badge-success badge-pill float-right">online</span>
+                    {% endif %} #}
+                </p>
+                <h2 class="mb-4"><strong>
+                        {% if user.getLastName is not null or user.getFirstName is not null %}
+                            {{ user.getLastName }} {{ user.getFirstName }}
+                        {% endif %}
+                    </strong></h2>
+                <table>
+                    {% if user.getEmailVisibile %}
+                        <tr>
+                            <td class="min-width-2">Email:</td>
+                            <td class="text-muted">{{ user.getEmail }}</td>
+                        </tr>
+                    {% elseif app.user is not null and user.getUserId == app.user.userId or is_granted('ROLE_MOD') %}
+                        <tr>
+                            <td class="min-width-2">Email:</td>
+                            <td class="text-muted">{{ user.getEmail }} <small>(nem látható)</small></td>
+                        </tr>
+                    {% endif %}
+                    {% if app.user is not null and user.getTelephone is not null and user.getUserId == app.user.userId or is_granted('ROLE_MOD') %}
+                        <tr>
+                            <td class="min-width-2 pt-2">Telefon:</td>
+                            <td class="text-muted pt-2">{{ user.getTelephone }} <small>(nem látható)</small></td>
+                        </tr>
+                    {% endif %}
+                    {% if user.getUserId == app.user.userId or is_granted('ROLE_MOD') %}
+                        <tr>
+                            <td class="min-width-2 pt-2">Hírlevél:</td>
+                            <td class="text-muted pt-2">{% if user.getSubscribed %}Feliratkozva {# <small><a id="ffbutton" href="#" onclick="unsubscribe();">Leiratkozás hírlevélről</a></small> #}{% else %}Nincs feliratkozva {# <span><a id="ffbutton" href="#" onclick="hirdetesFeliratkoz('{{ user.getEmail }}');">Feliratkozás hírlevélre</a></span> #}{% endif %} <small>(nem látható)</small></td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        {% if user.getDescription is not null %}
+            <div class="m-1">
+                <p class="pb-0 mt-3 border-bottom border-gray">Leírás:</p>
+                <div>{{ user.getDescription|nl2br }}</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

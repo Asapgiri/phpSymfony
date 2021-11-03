@@ -1,0 +1,26 @@
+{# @var ad App/Entity/Advertisement #}
+
+{% extends 'email/e-base.html.twig' %}
+
+{% block title %}Hirdetési kérelem{% endblock %}
+
+{% block content %}
+    <p>Kedves <b>{{ ad.getAdName }}</b>!</p>
+
+    <p>Az Ön által beküldött hirdetési kérelmet a mai napon ({{ ad.getAdDatetime|date('Y F d. H:i:s')|fdateHu }}) feldolgozásra megkaptuk.</p>
+    <p><b><u>Állapot</u></b>: Szerkesztői jóváhagyásra vár!</p>
+    <p>Hirdetésének elfogadásáról és a megjelenés engedélyezéséről hamarosan értesítést küldünk.</p>
+    <p><b><u>Az Ön által beküldött hirdetés adatai</u></b>:</p>
+    <p>
+        <b><u>Hirdetés azonosító</u></b>: <span>{{ ad.getPublicId }}</span><br>
+        <b><u>Számlázási név</u></b>: <span>{{ ad.getAdName }}</span><br>
+        {% set billing = ad.getBilling %}
+        <b><u>Számlázási cím</u></b>: <span>{{ billing.getPostcode }} {{ billing.getCity }}, {{ billing.getAddress }}</span><br>
+        <b><u>Az ön által igényelt méret</u></b>: <span>{{ ad.getAdType }}</span><br>
+        <b><u>Feltöltött dokumentum(ok)</u></b>: <span>{% if ad.getAdFiles is not null %}{{ ad.getAdFiles }}.{% else %}-{% endif %}</span><br>
+
+        <b><u>Az üzenet szövege</u></b>:<br>
+        {{ ad.getAdMessage|nl2br }}
+    </p><br>
+    <p>Kérésére hamarosan válaszolni fogunk a(z) <a href="mailto:{{ ad.getAdEmail }}">{{ ad.getAdEmail }}</a> emailcímre.</p>
+{% endblock %}

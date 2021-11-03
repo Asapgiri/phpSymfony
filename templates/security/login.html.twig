@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bejelentkezés{% endblock %}
+
+{% block body %}
+    {% if authError is defined and authError %}
+        <div>
+                <div class="my-3 p-3 bg-warning rounded box-shadow center-600">
+                    <h5 class="pb-2 mb-0 text-center warning-message"><strong>Hibás felhasználónév vagy jelszó!</strong></h5>
+                    </div>
+                </div>
+        </div>
+        <div>
+            {% set authError = null %}
+    {% else %}
+        <div class="py-5">
+    {% endif %}
+        {% include 'security/loginform.html.twig' %}
+        </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

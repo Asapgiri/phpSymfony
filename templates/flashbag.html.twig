@@ -1,0 +1,13 @@
+{# Display the flashbag #}
+
+{% set notices = app.session.flashbag.get('notice') %}
+<div id="flashbag" class="mt-2">
+    {% for msg in notices %}
+        <div class="alert alert-warning alert-dismissible fade show p-2" role="alert">
+            {{ msg }}
+            <button type="button" class="close p-2" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+</div>

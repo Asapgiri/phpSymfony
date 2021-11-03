@@ -1,0 +1,15 @@
+{# templates/miujsag/addpub.html.twig #}
+
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block title %}Megjelenés hozzáadása{% endblock %}
+{% block pagetitle %}Megjelenés hozzáadása{% endblock %}
+
+{% block content %}
+    {% if form is not null and form is not empty %}
+        {% form_theme form with ['bootstrap_4_horizontal_layout.html.twig', 'miujsag/form.html.twig'] %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

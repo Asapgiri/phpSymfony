@@ -1,0 +1,6 @@
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block header %}{% endblock %}
+{% block content %}
+    {% if msg is defined and not null %}{{ msg }}{% else %}Nincs üzenet!{% endif %}
+{% endblock %}

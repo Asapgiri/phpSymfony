@@ -1,0 +1,75 @@
+{% extends 'admin/adminpagebase.html.twig' %}
+
+{% block javascripts %}
+<script src="/js/ads.js"></script>
+<script src="/js/search.js"></script>
+{% endblock %}
+
+{% block title %}Hirdetési kérelmek{% endblock %}
+{% block pagetitle %}Hirdetési kérelmek{% endblock %}
+
+{% block content %}
+    {% if ads is defined and not null %}
+        <p><input class="" type="text" id="searchbar" onkeyup="searchFunction('li')" placeholder="Hirdetés keresése.."></p>
+        <ul class="list-group list-group-flush" id="table">
+            <li class="list-group-item list-group-item-action p-2 disabled">
+                <strong>
+                    <div class="row">
+                        <div class="col-md-1">Id</div>
+                        <div class="col-md-2">Készítő</div>
+                        <div class="col-md-4">Email</div>
+                        <div class="col-md-2">Létrehozva</div>
+                        <div class="col-md-1">Típus</div>
+                        <div class="col-md-2">Filok</div>
+                    </div>
+                </strong>
+            </li>
+            {% for ad in ads %}
+                <li class="list-group-item list-group-item-action searchable
+                    {% if ad.isAdWatched is not null and ad.isAdWatched != true %}
+                    bg-warning
+                    {% endif %}
+                    p-2 small cursor-pointer"
+                    id="colli-{{ ad.getAdId }}"
+                    data-toggle="collapse" data-target="#collapse-{{ ad.getAdId }}"
+                    aria-expanded="false" aria-controls="collapse-{{ ad.getAdId }}" onclick="watchMessage({{ ad.getAdId }});">
+                    <div class="row">
+                        <div class="col-md-1">{{ ad.getAdId }}</div>
+                        <div class="col-md-2">
+                            {% if ad.getAdAuthor is not null %}
+                                <a href="{{ path('app_user', {user: ad.getAdAuthor.getUsername}) }}">@{{ ad.getAdAuthor.getUsername }}</a><br/>
+                            {% endif %}
+                            <strong>{{ ad.getAdName }}</strong>
+                        </div>
+                        <div class="col-md-4">{{ ad.getAdEmail }}</div>
+                        <div class="col-md-2">{{ ad.getAdDatetime|date("Y F d. H:i:s")|fdateHu }}</div>
+                        <div class="col-md-1">{{ ad.getAdType }}</div>
+                        <div class="col-md-2">
+                            {% if ad.getAdZip is not null %}
+                                <img src="/pubs/images/file-image.png" style="height: 35px">
+                            {% endif %}
+                            {% if ad.isAdWatched %}
+                                <span class="badge badge-success badge-pill float-right" id="collapse-{{ ad.getAdId }}-seen">seen</span>
+                            {% elseif ad.isAdWatched is not null %}
+                                <span class="badge badge-danger badge-pill float-right" id="collapse-{{ ad.getAdId }}-seen">unseen</span>
+                            {% else %}
+                                <span class="badge badge-warning badge-pill float-right" id="collapse-{{ ad.getAdId }}-seen">null</span>
+                            {% endif %}
+                        </div>
+                        <div hidden>{{ ad.getPublicId }}</div>
+                    </div>
+                </li>
+                <li class="list-group-item border-dark list-group-item-action p-0 bg-light collapse" id="collapse-{{ ad.getAdId }}">
+                    {% if ad.getAdZip is not null %}
+                    <div class="m-0 p-0 border-bottom border-dark bg-white text-right">
+                        <a class="d-inline px-2 border border-gray img-hover" href="{{ path('app_adlinks', {fileName: ad.getAdZip}) }}">{{ ad.getAdZip }}</a>
+                    </div>
+                    {% endif %}
+                    <div class="m-2 overflow-auto small" style="max-height: 500px" id="admessage-{{ ad.getAdId }}"></div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        Valami hiba folytán nem található a ads állomány, vagy null...
+    {% endif %}
+{% endblock %}

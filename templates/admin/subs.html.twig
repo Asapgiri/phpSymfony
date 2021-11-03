@@ -1,0 +1,12 @@
+{% extends 'admin/adminpagebase.html.twig' %}
+
+{% block creator %}{% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_admin_subs') }}">Feliratkozások letöltése</a>{% endif %}{% endblock %}
+
+{% block content %}
+    {% if form is not null and form is not empty %}
+        {% form_theme form 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

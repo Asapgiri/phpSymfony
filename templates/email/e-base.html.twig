@@ -1,0 +1,8 @@
+<p>{% block title %}Kérjük ne válaszoljon!{% endblock %}</p>
+<hr>
+{% if user is defined %}
+    <p>Kedves <b>{{ user.getUsername }}</b>!</p>
+{% endif %}
+{% block content %}{% endblock %}
+<hr>
+Amennyiben kérdése van keressen minket az <a href="mailto:miujsag@dunafenye.hu">miujsag@dunafenye.hu</a> email címen.

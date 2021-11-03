@@ -1,0 +1,25 @@
+{# templates/miujsag/pubs.html.twig #}
+{# @var pubs /App/Entity/Publication[]  #}
+{# @var pub /App/Entity/Publication  #}
+
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/search.js"></script>
+{% endblock %}
+
+{% block title %}Megjelenések{% endblock %}
+{% block pagetitle %}Megjelenések{% endblock %}
+{% block creator %}
+    {% if canPublicate %}
+        <a href="{{ path('app_addpub') }}">Megjelenés hozzáadása</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if pubs is not empty and not null %}
+    {% include 'miujsag/publist.html.twig' with {'search': true, 'route': 'app_pub'} %}
+    {% else %}
+        <p>Oldal feltöltés alatt...</p>
+    {% endif %}
+{% endblock %}

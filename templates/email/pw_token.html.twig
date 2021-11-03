@@ -1,0 +1,15 @@
+{# @var user App/Entity/User #}
+{# $var pwToken string #}
+
+{% extends 'email/e-base.html.twig' %}
+
+{% block title %}Elfelejtett jelszó helyreállítása{% endblock %}
+
+{% block content %}
+    <p>Jelszavának helyreállítását az alábbi linken teheti meg: <a href="{{ absolute_url(path('reset_password', {token: pwToken.getPwrToken})) }}">{{ absolute_url(path('reset_password', {token: pwToken.getPwrToken})) }}</a></p>
+    <p>
+        Kiállítási dátum: {{ pwToken.getPwrCreated|date('Y F d. H:i:s')|fdateHu }}<br>
+        Érvényesség dátuma: {{ pwToken.getPwrValidTo|date('Y F d. H:i:s')|fdateHu }}
+    </p>
+    <p>Amennyiben nem ön kérte jelszava visszaállítását ezt az emailt figyelmenkívül hagyhatja.</p>
+{% endblock %}

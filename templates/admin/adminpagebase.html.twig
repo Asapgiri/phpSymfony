@@ -1,0 +1,29 @@
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block title %}Page settings{% endblock %}
+{% block pagetitle %}Page settings{% endblock %}
+{% set adsCnt = adsCnt() %}
+
+{% block leftmenu %}
+<div class="border-top border-bottom border-gray px-2 py-3 mb-0">
+    <h6 class="border-bottom border-gray"><b>Settings:</b></h6>
+    <div class="list-group list-group-flush">
+        <a class="list-group-item list-group-item-action p-2{% if path('app_admin_users') == app.request.pathinfo %} active{% endif %}" href="{{ path('app_admin_users') }}">Felhasználók</a>
+        <a class="list-group-item list-group-item-action p-2{% if path('app_admin_forums') == app.request.pathinfo %} active{% endif %}" href="{{ path('app_admin_forums') }}">Fórumok</a>
+        <a class="list-group-item list-group-item-action p-2{% if path('app_admin_pubs') == app.request.pathinfo %} active{% endif %}" href="{{ path('app_admin_pubs') }}">Megjelenések</a>
+        <a class="list-group-item list-group-item-action p-2{% if path('app_admin_ads') == app.request.pathinfo %} active{% endif %}" href="{{ path('app_admin_ads') }}">Hirdetési kérelmek
+            {% if adsCnt > 0 %}
+            <span class="badge badge-primary badge-pill float-right" id="adsCnt">{{ adsCnt }}</span>
+            {% endif %}
+        </a>
+    </div>
+</div>
+    <div class="border-top border-bottom border-gray px-2 py-3 mb-0">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action p-2{% if path('app_admin_subs_send') == app.request.pathinfo %} active{% endif %}" href="{{ path('app_admin_subs_send') }}">Körlevél küldés</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

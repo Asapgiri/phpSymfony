@@ -1,0 +1,59 @@
+{# @var users App/Entity/Users[] #}
+{# @var user App/Entity/Users #}
+
+{% extends 'admin/adminpagebase.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/search.js"></script>
+    <script src="/js/users.js"></script>
+{% endblock %}
+
+{% block title %}Felhasználók{% endblock %}
+{% block pagetitle %}Felhasználók{% endblock %}
+
+{% block content %}
+    {% if users is defined and not null %}
+        <p><input class="" type="text" id="searchbar" onkeyup="searchFunction()" placeholder="Felhasználó keresése.."></p>
+        <ul class="list-group list-group-flush" id="table">
+            <li class="list-group-item list-group-item-action p-2 disabled">
+                <strong>
+                    <div class="row">
+                        <div class="col-md-2">Felhasználónév</div>
+                        <div class="col-md-3">Email<span class="badge badge-primary badge-pill float-right">visible</span></div>
+                        <div class="col-md-2">Vezetéknév</div>
+                        <div class="col-md-2">Keresztnév</div>
+                        <div class="col-md-1">Reg-d</div>
+                        <div class="col-md-2 text-center">Roles</div>
+                    </div>
+                </strong>
+            </li>
+            {% for user in users %}
+                <li class="list-group-item list-group-item-action p-2 small searchable cursor-pointer" id="colli-{{ user.getUserId }}"
+                    data-toggle="collapse" data-target="#collapse-{{ user.getUserId }}"
+                    aria-expanded="false" aria-controls="collapse-{{ user.getUserId }}" onclick="watchUserInfo({{ user.getUserId }});">
+                    <div class="row">
+                        <div class="col-md-2"><a href="{{ path('app_user', {user: user.getUsername}) }}">@{{ user.getUsername }}</a>
+                            {# {% if user.getUOnline %}
+                                <span class="badge badge-success badge-pill float-right">online</span>
+                            {% endif %} #}
+                        </div>
+                        <div class="col-md-3">{{ user.getEmail }}
+                            {% if user.getEmailVisibile %}
+                                <span class="badge badge-primary badge-pill float-right">visible</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-2">{{ user.getLastName }}</div>
+                        <div class="col-md-2">{{ user.getFirstName }}</div>
+                        <div class="col-md-1">{{ user.getRegDate|date('Y.m.d.') }}</div>
+                        <div class="col-md-2 text-right">{{ user.getRoles[0]|replace({'ROLE_': ''}) }}</div>
+                    </div>
+                <li class="list-group-item border-dark list-group-item-action p-0 bg-light collapse" id="collapse-{{ user.getUserId }}">
+                    <div class="m-2 overflow-auto small row" style="max-height: 500px" id="usermessage-{{ user.getUserId }}"></div>
+                </li>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        Valami hiba folytán nem található a users állomány, vagy null...
+    {% endif %}
+{% endblock %}

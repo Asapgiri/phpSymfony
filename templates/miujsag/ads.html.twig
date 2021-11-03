@@ -1,0 +1,62 @@
+{% extends 'miujsag/miujsag_base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/styles/dropzone.min.css">
+{% endblock %}
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="/js/dropzone.min.js"></script>
+{% endblock %}
+
+{% block header %}{% endblock %}
+{% block content %}
+{% if form is not null %}
+    {# {% form_theme form 'bootstrap_4_layout.html.twig' %} #}
+    {% form_theme form with ['bootstrap_4_horizontal_layout.html.twig', 'miujsag/form.html.twig'] %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="text-center mb-1">
+        <img src="/img/dijszabas_tablazat.png" alt="Díjszabások" style="max-width: 100%"/>
+
+        <h4 class="my-2"><b>Díjszabások táblázat</b></h4>
+    </div>
+    <h5><b>Lapozható minta <a href="/pubs/dijak/index.html" target="_blank">megtekintése</a></b></h5>
+    <div class="form-group mt-5">
+        <label for="form_ad_zip">Feltöltés (zip, jpeg, jpg, png, pdf, doc(x), xls(x))</label>
+        <div class="dropzone" name="form[ad_zip]"><div class="dz-default dz-message"><button class="dz-button" type="button">Húzzon ide fájlokat a feltöltéshez</button></div></div>
+    </div>
+    <div class="form-group"><button type="submit" style="width: 300px; margin: 15px 0px;" onclick="getUploadedFiles();" id="form_Elküldés" name="form[Elküldés]" class="btn-primary btn">Elküldés</button></div>
+    {{ form_end(form) }}
+    <span class="text-muted"><span class="red">*</span> A csillaggal megjelölt mezőket kötelező kitölteni.</span>
+
+    <script>
+        // init,configure dropzone
+        Dropzone.autoDiscover = false;
+        var dropzone_default = new Dropzone(".dropzone", {
+            url: '{{ path('app_ad_fileupload', {token: ad_token}) }}',
+            maxFiles: 100,
+            acceptedFiles: 'image/*,application/pdf,.zip,.doc,.docx,.xls,.xlsx,.csv,.tsv,.ppt,.pptx,.pages,.odt,.rtf',
+            maxFilesize: 25,  // in Mb
+            addRemoveLinks: true,
+            init: function () {
+                this.on("maxfilesexceeded", function(file) {
+                    this.removeFile(file);
+                });
+                this.on("sending", function(file, xhr, formData) {
+                    // send additional data with the file as POST data if needed.
+                    // formData.append("key", "value");
+                });
+                /*this.on("success", function(file, response) {
+                    if (response.uploaded)
+                        alert('File Uploaded: ' + response.fileName);
+                });*/
+            }
+        });
+
+        sel = document.getElementById('tax-selector')
+        if (sel) var selector = sel.outerHTML;
+    </script>
+{% endif %}
+    <script src="/js/adupload.js"></script>
+    <script src="/js/telcheck.js"></script>
+{% endblock %}

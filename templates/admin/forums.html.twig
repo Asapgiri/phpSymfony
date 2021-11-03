@@ -1,0 +1,51 @@
+{% extends 'admin/adminpagebase.html.twig' %}
+
+{% block javascripts %}
+    <script src="/js/search.js"></script>
+{% endblock %}
+
+{% block title %}Fórumok{% endblock %}
+{% block pagetitle %}Fórumok{% endblock %}
+
+{% block content %}
+    {% if forums is defined and not null %}
+        <p><input class="" type="text" id="searchbar" onkeyup="searchFunction()" placeholder="Fórum keresése.."></p>
+        <ul class="list-group list-group-flush" id="table">
+            <li class="list-group-item list-group-item-action p-2 disabled">
+                <strong>
+                    <div class="row">
+                        <div class="col-md-1">Id</div>
+                        <div class="col-md-2">Készítő</div>
+                        <div class="col-md-4">Megnevezés</div>
+                        <div class="col-md-2">Készítés</div>
+                        <div class="col-md-2">Utolsó üzenet</div>
+                        <div class="col-md-1 text-center"><span class="badge badge-primary badge-pill float-right">visible</span></div>
+                    </div>
+                </strong>
+            </li>
+            {% for forum in forums %}
+                <li class="list-group-item list-group-item-action p-2 small searchable cursor-pointer" href="{{ path('app_forum', {forumId: forum.getFId}) }}">
+                    <div class="row">
+                        <div class="col-md-1">{{ forum.getFId }}</div>
+                        <div class="col-md-2"><a href="{{ path('app_user', {user: forum.getFAuthor.getUsername}) }}">@{{ forum.getFAuthor.getUsername }}</a>
+                            {# {% if forum.getFAuthor.getUOnline %}
+                                <span class="badge badge-success badge-pill float-right">online</span>
+                            {% endif %} #}<br />
+                            <strong>{{ forum.getFAuthor.getLastName }} {{ forum.getFAuthor.getFirstName }}</strong>
+                        </div>
+                        <div class="col-md-4"><a href="{{ path('app_forum', {forumId: forum.getFId}) }}">{{ forum.getFName }}</a></div>
+                        <div class="col-md-2">{{ forum.getFCreated|date('Y F d. H:i:s')|fdateHu }}</div>
+                        <div class="col-md-2">{{ forum.getFLastmsg|date('Y F d. H:i:s')|fdateHu }}</div>
+                        <div class="col-md-1 text-right">
+                            {% if forum.getFVisible %}
+                                <span class="badge badge-primary badge-pill float-right">visible</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        Valami hiba folytán nem található a forums állomány, vagy null...
+    {% endif %}
+{% endblock %}

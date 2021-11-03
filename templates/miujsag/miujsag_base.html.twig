@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="row mb-2">
+    <div class="col-lg-3 px-2">
+        <div class="my-3 p-3 leftmenu">
+        {% block leftmenu %}
+            <div class="border-top border-bottom border-gray px-2 py-2 mb-0 text-center">
+                {{ dateHu("Y F d.") }}
+            </div>
+            <div class="border-top border-bottom border-gray px-2 py-2 mb-0 text-center">
+                <b>{{dateHu('F')}}</b> régies nevei:<br/>
+                {{ oldDateHu()|nl2br }}
+            </div>
+                <div class="border-top border-bottom border-gray px-2 py-3 mb-0">
+                    <h6><b>Friss megjelenések:</b></h6>
+                    <div class="list-group list-group-flush" id="left-pubs">
+                        {% for pub in getPubs(3) %}
+                        <a class="list-group-item list-group-item-action p-2" href="{{ path('app_pub', {pubId: pub.getPubId}) }}">{{ pub.getPubName }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="border-top border-bottom border-gray px-2 py-3 mb-0">
+                    <h6><b>Legfrissebb fórumok:</b></h6>
+                    <div class="list-group list-group-flush" id="left-forums">
+                        {% for forum in getForums(3) %}
+                            {% set path = path('app_forum', {forumId: forum.getFId}) %}
+                            <a class="list-group-item list-group-item-action p-2{% if path == app.request.pathinfo %} active{% endif %}" href="{{ path }}">{{ forum.getFName }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+        {% endblock %}
+        </div>
+    </div>
+    <div class="col-lg-9 px-2">
+            {% if noHeader is not defined %}
+            <div class="my-3">
+                {% block header %}<h6 class="border-bottom border-gray pb-2 mb-0"><span class="news-text">{% block pagetitle %}{% endblock %}</span>{% block feditor %}{% endblock %}<span class="text-muted small float-right">{% block creator %}{% endblock %}</span><br>{% block pagedesc %}{% endblock %}</h6>{% endblock %}
+            {% else %}
+            <div>
+            {% endif %}
+            <div class="text-muted pt-3">
+                {% block content %}
+                    {% include 'miujsag/publist.html.twig' with {'colWidth': 6, 'route': 'app_main'} %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
