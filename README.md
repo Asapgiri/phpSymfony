@@ -2,7 +2,7 @@
 
 PHP Symfony keretrenfszerben készült projektmunkám, melyet családi vállalkozásunknak készítettem. Ezért a weboldalon az arra feltöltött újságokat leht megtekinteni, melyet külön szoftver készít el.
 
-A projektet letöltve elindítva jelenleg nem teszteltem, jelenleg előben fut a következő linken: https://miujsag.dunafenye.hu/
+A projektet letöltve elindítva feltöltés előtt nem teszteltem, jelenleg előben fut a következő linken: https://miujsag.dunafenye.hu/
 
 Sajnos szerver alapú rendereléssel van csak elátva, így a kliens az lényegesen sokat várhat a részletek megjelenítésére, melyeket javascript kérésekkel vannak megvalósítva.
 
