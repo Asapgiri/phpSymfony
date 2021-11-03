@@ -11,6 +11,7 @@ A weboldal 4 fő oldalból áll melyek:
  * fórum
  * megjelenések
  * hirdetési kérelem
+
 Ezen felül bejelentkezés után minden felhasználónak létezik adatlapja melyet szerkeszthet ls nyilvánosan látható, és az admin felhasználóknak is látható egy külön kezelői felület.
 
 ## Kezdőlap/Főoldal:
